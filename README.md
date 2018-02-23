@@ -31,3 +31,9 @@ A playground to test the performance of Generative Adversial Networks
 ### Requirements
 - Python 3
 
+## References
+- https://github.com/llSourcell/Pokemon_GAN
+- https://github.com/moxiegushi/pokeGAN
+- https://github.com/jiamings/wgan
+- https://arxiv.org/abs/1406.2661
+- https://arxiv.org/abs/1701.07875
