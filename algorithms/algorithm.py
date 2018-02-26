@@ -6,6 +6,7 @@ import tensorflow as tf
 import time
 
 BASE_OUT_DIR = 'out'
+BASE_LOG_DIR = 'log'
 
 
 class Algorithm(ABC):
@@ -23,15 +24,36 @@ class Algorithm(ABC):
         """Train the model."""
         pass
 
-    @abstractmethod
     def get_out_dir(self):
-        """Get the name of the algorithm's output directory."""
-        pass
+        """Get the name of the model's output directory."""
+        model_dir = '{}/{}'.format(self.get_base_out_dir(), self.get_name())
+        if not os.path.isdir(model_dir):
+            os.makedirs(model_dir)
+
+        dataset_name = self.data_loader.get_name()
+        dataset_dir = '{}/{}'.format(model_dir, dataset_name)
+        if not os.path.isdir(dataset_dir):
+            os.makedirs(dataset_dir)
+
+        return dataset_dir
 
     @staticmethod
     def get_base_out_dir():
         """Get the base output directory."""
         return BASE_OUT_DIR
+
+    def get_log_dir(self):
+        """Get the name of the model's logging directory."""
+        model_dir = '{}/{}'.format(self.get_base_out_dir(), self.get_name())
+        if not os.path.isdir(model_dir):
+            os.makedirs(model_dir)
+
+        return model_dir
+
+    @staticmethod
+    def get_base_log_dir():
+        """Get the base logging directory."""
+        return BASE_LOG_DIR
 
     def get_name(self):
         """Get the name of the algorithm class."""

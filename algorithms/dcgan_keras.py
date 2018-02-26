@@ -6,18 +6,19 @@ from keras.engine.training import Model
 from keras.preprocessing import image
 import numpy as np
 import os
+from tensorflow.python.client import timeline
 import time
 
 LATENT_DIM = 32
 HEIGHT = 32
 WIDTH = 32
 CHANNELS = 3
-NAME = 'dcgan_keras'
+MODEL_NAME = 'dcgan_keras'
 
 
 class DCGANKeras(Algorithm):
     def __init__(self, data_loader: DataLoader, save_file_name: str = None):
-        super().__init__(data_loader, save_file_name, NAME)
+        super().__init__(data_loader, save_file_name, MODEL_NAME)
         self.discriminator: Model = self.get_discriminator()
         self.generator: Model = self.get_generator()
         self.discriminator.trainable = False
@@ -146,16 +147,3 @@ class DCGANKeras(Algorithm):
         # generator.summary()
 
         return generator
-
-    def get_out_dir(self):
-        model_name = self.get_name()
-        model_dir = '{}/{}'.format(self.get_base_out_dir(), model_name)
-        if not os.path.isdir(model_dir):
-            os.makedirs(model_dir)
-
-        dataset_name = self.data_loader.get_name()
-        dataset_dir = '{}/{}'.format(model_dir, dataset_name)
-        if not os.path.isdir(dataset_dir):
-            os.makedirs(dataset_dir)
-
-        return dataset_dir
