@@ -6,6 +6,7 @@ from keras.engine.training import Model
 from keras.preprocessing import image
 import numpy as np
 import os
+import sys
 from tensorflow.python.client import timeline
 import time
 
@@ -70,20 +71,20 @@ class DCGANKeras(Algorithm):
             if start > len(x_train) - batch_size:
                 start = 0
 
+            runtime = self.get_runtime(start_time)
+            sys.stdout.write(
+                '\rEpoch: {},    Elapsed: {}    d_loss: {:.3f}    a_loss: {:.3f}'.format(epoch, runtime, d_loss, a_loss)
+            )
+            sys.stdout.flush()
+
             # occasionally save/plot
-            if epoch % 1 == 0:
+            if epoch % 100 == 0:
                 # save model weights
                 # self.gan.save_weights('gan.h5')
 
-                # print metrics
-                print('  discriminator loss at epoch %s: %s' % (epoch, d_loss))
-                print('  adversarial loss at epoch %s: %s' % (epoch, a_loss))
-                print('  elapsed runtime: %s' % self.get_runtime(start_time))
-                print()
-
                 # save a generated image
-                # img = image.array_to_img(generated_images[0] * 255, scale=False)
-                # img.save(os.path.join(self.get_out_dir(), 'epoch_{:06d}.png'.format(epoch)))
+                img = image.array_to_img(generated_images[0] * 255, scale=False)
+                img.save(os.path.join(self.get_out_dir(), 'epoch_{:06d}.png'.format(epoch)))
 
         # print('total runtime: %0.3f' % self.get_runtime(start_time))
 

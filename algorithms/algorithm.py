@@ -69,7 +69,7 @@ class Algorithm(ABC):
         hours = elapsed.seconds // 3600
         mins = (elapsed.seconds // 60) % 60
         seconds = elapsed.seconds % 60
-        return '{} hours, {} mins, {} seconds'.format(hours, mins, seconds)
+        return '{} hours {:02d} mins {:02d} seconds'.format(hours, mins, seconds)
 
 
 def leaky_relu(x, n, leak=0.2):
