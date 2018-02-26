@@ -3,11 +3,13 @@ from colorama import Fore, Style
 from dataloaders.dataloader import DataLoader
 import keras
 from keras import layers
+from keras.callbacks import TensorBoard
 from keras.engine.training import Model
 from keras.preprocessing import image
 import numpy as np
 import os
 import sys
+import tensorflow as tf
 from tensorflow.python.client import timeline
 import time
 
@@ -16,6 +18,17 @@ HEIGHT = 32
 WIDTH = 32
 CHANNELS = 3
 MODEL_NAME = 'dcgan_keras'
+
+
+def write_log(callback, names, logs, batch_no):
+    """Helper method to write logs to TensorBoard."""
+    for name, value in zip(names, logs):
+        summary = tf.Summary()
+        summary_value = summary.value.add()
+        summary_value.simple_value = value
+        summary_value.tag = name
+        callback.writer.add_summary(summary, batch_no)
+        callback.writer.flush()
 
 
 class DCGANKeras(Algorithm):
@@ -30,13 +43,18 @@ class DCGANKeras(Algorithm):
         gan_optimizer = keras.optimizers.RMSprop(lr=0.0004, clipvalue=1.0, decay=1e-8)
         self.gan.compile(optimizer=gan_optimizer, loss='binary_crossentropy')
 
+        self.callback = TensorBoard(self.get_log_dir())
+        self.callback.set_model(self.gan)
+        self.train_names = ['train_loss']
+        # self.validation_names = ['val_loss', 'val_mae']
+
     def train(self, epochs: int, d_iters=5, g_iters=1):
         (x_train, y_train), (_, _) = keras.datasets.cifar10.load_data()
         x_train = x_train[y_train.flatten() == 6]  # frog images
         x_train = x_train.reshape((x_train.shape[0],) + (HEIGHT, WIDTH, CHANNELS)).astype('float32') / 255.
         batch_size = 20
 
-        start = 0
+        batch_num = 0
         start_time = time.time()
         for epoch in range(epochs):
             # sample random points in the latent space
@@ -46,8 +64,8 @@ class DCGANKeras(Algorithm):
             generated_images = self.generator.predict(random_latent_vectors)
 
             # combine them with real images
-            stop = start + batch_size
-            real_images = x_train[start:stop]
+            stop = batch_num + batch_size
+            real_images = x_train[batch_num:stop]
             combined_images = np.concatenate([generated_images, real_images])
 
             # assemble labels discriminating real from fake images
@@ -67,10 +85,11 @@ class DCGANKeras(Algorithm):
             # train the generator
             # via the GAN model where the discriminator weights are frozen
             a_loss = self.gan.train_on_batch(random_latent_vectors, misleading_targets)
+            # write_log(self.callback, self.train_names, a_loss, start_time) # @todo need to fix
 
-            start += batch_size
-            if start > len(x_train) - batch_size:
-                start = 0
+            batch_num += batch_size
+            if batch_num > len(x_train) - batch_size:
+                batch_num = 0
 
             runtime = self.get_runtime(start_time)
             sys.stdout.write(
@@ -89,8 +108,6 @@ class DCGANKeras(Algorithm):
                 # save a generated image
                 img = image.array_to_img(generated_images[0] * 255, scale=False)
                 img.save(os.path.join(self.get_out_dir(), 'epoch_{:06d}.png'.format(epoch)))
-
-        # print('total runtime: %0.3f' % self.get_runtime(start_time))
 
     def get_discriminator(self) -> Model:
         discriminator_input = layers.Input(shape=(HEIGHT, WIDTH, CHANNELS))
