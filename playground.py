@@ -1,4 +1,6 @@
+from algorithms.algorithm import Algorithm
 from algorithms.dcgan import DCGAN
+from algorithms.dcgan_keras import DCGANKeras
 from algorithms.wgan import WGAN
 import argparse
 from dataloaders.dataloader import DataLoader
@@ -14,6 +16,7 @@ DATASETS = {
 }
 ALGORITHMS = {
     'dcgan': DCGAN,
+    'dcgan_keras': DCGANKeras,
     'wgan': WGAN,
 }
 SAVE_FILE_NAME = 'checkpoint/checkpoint.ckpt'
@@ -34,10 +37,11 @@ def dataset_factory(dataset_name: str):
         raise ValueError('Dataset does not exist "%s"' % dataset_name)
 
 
-def algorithm_factory(algorithm_type: str, data_loader: DataLoader, save_progress):
+def algorithm_factory(algorithm_type: str, data_loader: DataLoader, save_progress) -> Algorithm:
     if algorithm_type in ALGORITHMS:
+        algorithm = ALGORITHMS[algorithm_type]
         save_file_name = SAVE_FILE_NAME if save_progress else None
-        return ALGORITHMS[algorithm_type](data_loader, save_file_name)
+        return algorithm(data_loader, save_file_name)
     else:
         raise ValueError('Model type does not exists "%s"' % algorithm_type)
 
