@@ -3,6 +3,7 @@ from algorithms.dcgan import DCGAN
 from algorithms.dcgan_keras import DCGANKeras
 from algorithms.wgan import WGAN
 import argparse
+import colorama
 from dataloaders.dataloader import DataLoader
 from dataloaders.cifar10 import Cifar10DataLoader
 from dataloaders.mnist import MNISTDataLoader
@@ -47,6 +48,7 @@ def algorithm_factory(algorithm_type: str, data_loader: DataLoader, save_progres
 
 
 if __name__ == '__main__':
+    colorama.init()
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, default='mnist', help='which dataset to load')
     parser.add_argument('--algorithm', type=str, default='wgan', help='which GAN algorithm to use')

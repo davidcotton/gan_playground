@@ -1,4 +1,5 @@
 from algorithms.algorithm import Algorithm
+from colorama import Fore, Style
 from dataloaders.dataloader import DataLoader
 import keras
 from keras import layers
@@ -73,7 +74,10 @@ class DCGANKeras(Algorithm):
 
             runtime = self.get_runtime(start_time)
             sys.stdout.write(
-                '\rEpoch: {},    Elapsed: {}    d_loss: {:.3f}    a_loss: {:.3f}'.format(epoch, runtime, d_loss, a_loss)
+                f'\rEpoch: {Fore.GREEN}{epoch}{Style.RESET_ALL}    ' +
+                f'Elapsed: {runtime}    ' +
+                f'd_loss: {Fore.MAGENTA}{d_loss:.3f}{Style.RESET_ALL}    ' +
+                f'a_loss: {Fore.RED}{a_loss:.3f}{Style.RESET_ALL}'
             )
             sys.stdout.flush()
 

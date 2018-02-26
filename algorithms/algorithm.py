@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from colorama import Fore, Style
 from dataloaders.dataloader import DataLoader
 from datetime import timedelta
 import os
@@ -69,7 +70,9 @@ class Algorithm(ABC):
         hours = elapsed.seconds // 3600
         mins = (elapsed.seconds // 60) % 60
         seconds = elapsed.seconds % 60
-        return '{} hours {:02d} mins {:02d} seconds'.format(hours, mins, seconds)
+        return f'{Fore.YELLOW}{hours}{Style.RESET_ALL} hours ' + \
+               f'{Fore.YELLOW}{mins:02d}{Style.RESET_ALL} mins ' + \
+               f'{Fore.YELLOW}{seconds:02d}{Style.RESET_ALL} seconds'
 
 
 def leaky_relu(x, n, leak=0.2):
