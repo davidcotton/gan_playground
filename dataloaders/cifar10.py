@@ -3,7 +3,8 @@ from dataloaders.dataloader import DataLoader
 
 class Cifar10DataLoader(DataLoader):
     def __init__(self):
-        pass
+        super().__init__()
+        self.name = 'cifar10'
 
     def load_data(self):
         pass

@@ -9,7 +9,8 @@ DATA_DIR = 'data/pokemon'
 
 class PokemonDataLoader(DataLoader):
     def __init__(self):
-        pass
+        super().__init__()
+        self.name = 'pokemon'
 
     def load_data(self):
         images = [os.path.join(DATA_DIR, img) for img in os.listdir(DATA_DIR)]
