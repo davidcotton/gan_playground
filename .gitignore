@@ -1,5 +1,7 @@
 /data/*
 !/data/README.md
+/out/*
+!/out/.gitkeep
 /venv/
 
 
