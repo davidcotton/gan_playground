@@ -49,12 +49,8 @@ class DCGANKeras(Model):
         # self.validation_names = ['val_loss', 'val_mae']
 
     def train(self, epochs: int, d_iters=5, g_iters=1):
-        (x_train, y_train), (_, _) = keras.datasets.cifar10.load_data()
-        x_train = x_train[y_train.flatten() == 6]  # frog images
-        x_train = x_train.reshape((x_train.shape[0],) + (HEIGHT, WIDTH, CHANNELS)).astype('float32') / 255.
-        batch_size = 20
-
-        batch_num = 0
+        self.data_loader.load_data()
+        batch_size = self.data_loader.batch_size
         start_time = time.time()
         for epoch in range(epochs):
             # sample random points in the latent space
@@ -64,8 +60,7 @@ class DCGANKeras(Model):
             generated_images = self.generator.predict(random_latent_vectors)
 
             # combine them with real images
-            stop = batch_num + batch_size
-            real_images = x_train[batch_num:stop]
+            real_images = self.data_loader.next_batch()
             combined_images = np.concatenate([generated_images, real_images])
 
             # assemble labels discriminating real from fake images
@@ -86,10 +81,6 @@ class DCGANKeras(Model):
             # via the GAN model where the discriminator weights are frozen
             a_loss = self.gan.train_on_batch(random_latent_vectors, misleading_targets)
             # write_log(self.callback, self.train_names, a_loss, start_time) # @todo need to fix
-
-            batch_num += batch_size
-            if batch_num > len(x_train) - batch_size:
-                batch_num = 0
 
             runtime = self.get_runtime(start_time)
             sys.stdout.write(

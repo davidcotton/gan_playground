@@ -2,16 +2,18 @@ from abc import ABC, abstractmethod
 
 
 class DataLoader(ABC):
-    def __init__(self) -> None:
+    def __init__(self, batch_size: int = 0) -> None:
         super().__init__()
         self.name = None
+        self.batch_size = batch_size
+        self.batch_num = 0
 
     @abstractmethod
     def load_data(self):
         pass
 
     @abstractmethod
-    def next_batch(self, batch_size: int):
+    def next_batch(self):
         pass
 
     def get_name(self):
