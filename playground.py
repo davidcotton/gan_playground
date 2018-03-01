@@ -38,11 +38,10 @@ def dataset_factory(dataset_name: str):
         raise ValueError('Dataset does not exist "%s"' % dataset_name)
 
 
-def algorithm_factory(model_type: str, data_loader: DataLoader, save_progress) -> Model:
+def algorithm_factory(model_type: str, data_loader: DataLoader, save) -> Model:
     if model_type in MODELS:
         model = MODELS[model_type]
-        save_file_name = SAVE_FILE_NAME if save_progress else None
-        return model(data_loader, save_file_name)
+        return model(data_loader, save)
     else:
         raise ValueError('Model type does not exists "%s"' % model_type)
 
