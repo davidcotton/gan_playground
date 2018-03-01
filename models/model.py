@@ -10,7 +10,7 @@ BASE_OUT_DIR = 'out'
 BASE_LOG_DIR = 'log'
 
 
-class Algorithm(ABC):
+class Model(ABC):
     def __init__(self, data_loader: DataLoader, save_file_name: str = None, name: str = None):
         self.data_loader = data_loader
         self.sess = tf.Session()

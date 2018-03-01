@@ -1,4 +1,3 @@
-from algorithms.algorithm import Algorithm
 from colorama import Fore, Style
 from dataloaders.dataloader import DataLoader
 import keras
@@ -6,6 +5,7 @@ from keras import layers
 from keras.callbacks import TensorBoard
 from keras.engine.training import Model
 from keras.preprocessing import image
+from models.model import Model
 import numpy as np
 import os
 import sys
@@ -31,7 +31,7 @@ def write_log(callback, names, logs, batch_no):
         callback.writer.flush()
 
 
-class DCGANKeras(Algorithm):
+class DCGANKeras(Model):
     def __init__(self, data_loader: DataLoader, save_file_name: str = None):
         super().__init__(data_loader, save_file_name, MODEL_NAME)
         self.discriminator: Model = self.get_discriminator()
