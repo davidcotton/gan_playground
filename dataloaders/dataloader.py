@@ -1,22 +1,23 @@
+"""Helper to assist in the loading and batching of different image datasets."""
+
 from abc import ABC, abstractmethod
 
 
 class DataLoader(ABC):
-    def __init__(self, batch_size: int = 0) -> None:
-        super().__init__()
-        self.name = None
-        self.batch_size = batch_size
-        self.batch_num = 0
+    def __init__(self, name: str, height: int, width: int, channels: int, batch_size: int) -> None:
+        self.name: str = name
+        self.height: int = height
+        self.width: int = width
+        self.channels: int = channels
+        self.batch_size: int = batch_size
+        self.batch_num: int = 0
 
     @abstractmethod
-    def load_data(self):
+    def load_data(self) -> None:
+        """Load the dataset."""
         pass
 
     @abstractmethod
     def next_batch(self):
+        """Fetch the next batch of images from the dataset."""
         pass
-
-    def get_name(self):
-        if self.name is None:
-            raise NotImplementedError('Data loader name not implemented in %s' % self.__class__.__name__)
-        return self.name

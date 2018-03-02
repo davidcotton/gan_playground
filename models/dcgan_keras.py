@@ -14,9 +14,6 @@ from tensorflow.python.client import timeline
 import time
 
 LATENT_DIM = 32
-HEIGHT = 32
-WIDTH = 32
-CHANNELS = 3
 MODEL_NAME = 'dcgan_keras'
 
 
@@ -101,7 +98,11 @@ class DCGANKeras(Model):
                 img.save(os.path.join(self.get_out_dir(), 'epoch_{:06d}.png'.format(epoch)))
 
     def get_discriminator(self) -> Model:
-        discriminator_input = layers.Input(shape=(HEIGHT, WIDTH, CHANNELS))
+        height = self.data_loader.height
+        width = self.data_loader.width
+        channels = self.data_loader.channels
+
+        discriminator_input = layers.Input(shape=(height, width, channels))
         x = layers.Conv2D(128, 3)(discriminator_input)
         x = layers.LeakyReLU()(x)
         x = layers.Conv2D(128, 4, strides=2)(x)
@@ -134,6 +135,8 @@ class DCGANKeras(Model):
         return discriminator
 
     def get_generator(self) -> Model:
+        channels = self.data_loader.channels
+
         generator_input = keras.Input(shape=(LATENT_DIM,))
         # first transform the input into a 16x16 128-channel feature map
         x = layers.Dense(128 * 16 * 16)(generator_input)
@@ -155,7 +158,7 @@ class DCGANKeras(Model):
         x = layers.LeakyReLU()(x)
 
         # produce a 32x32 1-channel feature map
-        x = layers.Conv2D(CHANNELS, 7, activation='tanh', padding='same')(x)
+        x = layers.Conv2D(channels, 7, activation='tanh', padding='same')(x)
         generator = keras.models.Model(generator_input, x)
         # generator.summary()
 
