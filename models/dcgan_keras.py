@@ -13,7 +13,7 @@ import tensorflow as tf
 from tensorflow.python.client import timeline
 import time
 
-LATENT_DIM = 100
+LATENT_DIM = 64
 MODEL_NAME = 'dcgan_keras'
 
 
