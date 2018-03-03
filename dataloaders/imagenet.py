@@ -7,8 +7,8 @@ from PIL import Image
 from scipy import ndimage
 
 DATA_DIR = 'data/imagenet/bird'
-HEIGHT = 32
-WIDTH = 32
+HEIGHT = 64
+WIDTH = 64
 CHANNELS = 3
 
 

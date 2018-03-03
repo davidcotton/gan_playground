@@ -13,7 +13,7 @@ import tensorflow as tf
 from tensorflow.python.client import timeline
 import time
 
-LATENT_DIM = 32
+LATENT_DIM = 100
 MODEL_NAME = 'dcgan_keras'
 
 
@@ -54,9 +54,11 @@ class DCGANKeras(Model):
 
             # decode them to fake images
             generated_images = self.generator.predict(random_latent_vectors)
+            print('gen_img_shape', generated_images.shape)
 
             # combine them with real images
             real_images = self.data_loader.next_batch()
+            print('real_img_shape', real_images.shape)
             combined_images = np.concatenate([generated_images, real_images])
 
             # assemble labels discriminating real from fake images
@@ -78,14 +80,7 @@ class DCGANKeras(Model):
             a_loss = self.gan.train_on_batch(random_latent_vectors, misleading_targets)
             # write_log(self.callback, self.train_names, a_loss, start_time) # @todo need to fix
 
-            runtime = self.get_runtime(start_time)
-            sys.stdout.write(
-                f'\rEpoch: {Fore.GREEN}{epoch}{Style.RESET_ALL}    ' +
-                f'Elapsed: {runtime}    ' +
-                f'd_loss: {Fore.MAGENTA}{d_loss:.3f}{Style.RESET_ALL}    ' +
-                f'a_loss: {Fore.RED}{a_loss:.3f}{Style.RESET_ALL}'
-            )
-            sys.stdout.flush()
+            self.print_metrics(start_time, epoch, d_loss, a_loss)
 
             # occasionally save/plot
             if epoch % 100 == 0:
@@ -142,22 +137,22 @@ class DCGANKeras(Model):
 
         generator_input = keras.Input(shape=(LATENT_DIM,))
         # first transform the input into a 16x16 128-channel feature map
-        x = layers.Dense(128 * 16 * 16)(generator_input)
+        x = layers.Dense(128 * 32 * 32)(generator_input)
         x = layers.LeakyReLU()(x)
-        x = layers.Reshape((16, 16, 128))(x)
+        x = layers.Reshape((32, 32, 128))(x)
 
         # then add a convolution layer
-        x = layers.Conv2D(256, 5, padding='same')(x)
+        x = layers.Conv2D(1024, 5, padding='same')(x)
         x = layers.LeakyReLU()(x)
 
         # upsample to 32x32
-        x = layers.Conv2DTranspose(filters=256, kernel_size=4, strides=2, padding='same')(x)
+        x = layers.Conv2DTranspose(filters=1024, kernel_size=4, strides=2, padding='same')(x)
         x = layers.LeakyReLU()(x)
 
         # few more conv layers
-        x = layers.Conv2D(256, 5, padding='same')(x)
+        x = layers.Conv2D(1024, 5, padding='same')(x)
         x = layers.LeakyReLU()(x)
-        x = layers.Conv2D(256, 5, padding='same')(x)
+        x = layers.Conv2D(1024, 5, padding='same')(x)
         x = layers.LeakyReLU()(x)
 
         # produce a 32x32 1-channel feature map
@@ -166,3 +161,14 @@ class DCGANKeras(Model):
         # generator.summary()
 
         return generator
+
+    def print_metrics(self, start_time, epoch, d_loss, a_loss):
+        """Print updating training metrics."""
+        runtime = self.get_runtime(start_time)
+        sys.stdout.write(
+            f'\rEpoch: {Fore.GREEN}{epoch}{Style.RESET_ALL}    ' +
+            f'Elapsed: {runtime}    ' +
+            f'd_loss: {Fore.MAGENTA}{d_loss:.3f}{Style.RESET_ALL}    ' +
+            f'a_loss: {Fore.RED}{a_loss:.3f}{Style.RESET_ALL}'
+        )
+        sys.stdout.flush()

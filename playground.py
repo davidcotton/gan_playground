@@ -28,7 +28,7 @@ BATCH_SIZE = 32
 
 def main(args):
     data_loader = dataset_factory(args.dataset)
-    model = model_factory(args.model, data_loader, args.save)
+    model = model_factory(args, data_loader, )
     model.train(args.epochs)
 
 
@@ -41,10 +41,13 @@ def dataset_factory(dataset_name: str):
         raise ValueError('Dataset does not exist "%s"' % dataset_name)
 
 
-def model_factory(model_type: str, data_loader: DataLoader, save: bool) -> Model:
+def model_factory(args, data_loader: DataLoader) -> Model:
+    model_type = args.model
+    save_progress = args.save_progress
+    save_real_imgs = args.save_real_images
     if model_type in MODELS:
         model = MODELS[model_type]
-        return model(data_loader, save)
+        return model(data_loader, save_progress, save_real_imgs)
     else:
         raise ValueError('Model type does not exists "%s"' % model_type)
 
@@ -55,6 +58,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', type=str, default='mnist', help='which dataset to load')
     parser.add_argument('--model', type=str, default='wgan', help='which GAN algorithm to use')
     parser.add_argument('--epochs', type=int, default=100000, help='the number of episodes')
-    parser.add_argument('--save', help='load and save progress', action='store_true')
+    parser.add_argument('--save_progress', help='load and save progress', action='store_true')
+    parser.add_argument('--save_real_images', help='save the real images also', action='store_true')
     parser.add_argument('--verbose', help='verbose error logging', action='store_true')
     main(parser.parse_args())
