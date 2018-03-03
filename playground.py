@@ -47,7 +47,7 @@ def model_factory(args, data_loader: DataLoader) -> Model:
     save_real_imgs = args.save_real_images
     if model_type in MODELS:
         model = MODELS[model_type]
-        return model(data_loader, save_progress, save_real_imgs)
+        return model(data_loader, save_progress)
     else:
         raise ValueError('Model type does not exists "%s"' % model_type)
 

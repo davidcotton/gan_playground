@@ -11,11 +11,11 @@ BASE_LOG_DIR = 'log'
 
 
 class Model(ABC):
-    def __init__(self, data_loader: DataLoader, save: bool = False, name: str = None):
+    def __init__(self, data_loader: DataLoader, save_model: bool, name: str = None):
         self.data_loader = data_loader
         self.sess = tf.Session()
         self.name: str = name
-        self.save = save
+        self.save_model = save_model
 
     @abstractmethod
     def train(self, epochs: int, d_iters=5, g_iters=1):

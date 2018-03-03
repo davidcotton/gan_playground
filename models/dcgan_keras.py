@@ -29,8 +29,8 @@ def write_log(callback, names, logs, batch_no):
 
 
 class DCGANKeras(Model):
-    def __init__(self, data_loader: DataLoader, save: bool = False):
-        super().__init__(data_loader, save, MODEL_NAME)
+    def __init__(self, data_loader: DataLoader, save_model: bool = False):
+        super().__init__(data_loader, save_model, MODEL_NAME)
         self.discriminator: Model = self.get_discriminator()
         self.generator: Model = self.get_generator()
         self.discriminator.trainable = False
@@ -84,7 +84,7 @@ class DCGANKeras(Model):
 
             # occasionally save/plot
             if epoch % 100 == 0:
-                if self.save:
+                if self.save_model:
                     self.gan.save_weights('gan.h5')
 
                 # save a generated image
