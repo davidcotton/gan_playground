@@ -94,7 +94,11 @@ class DCGANKeras(Model):
 
                 # save a generated image
                 img = image.array_to_img(generated_images[0] * 255, scale=False)
-                img.save(os.path.join(self.get_output_dir(), 'epoch_{:06d}.png'.format(epoch)))
+                img.save(os.path.join(self.get_output_dir(), f'epoch_{epoch:06d}.png'))
+
+                # Save one real image, for comparison
+                img = image.array_to_img(real_images[0] * 255., scale=False)
+                img.save(os.path.join(self.get_output_dir(), f'real_{epoch:06d}.png'))
 
     def get_discriminator(self) -> Model:
         height = self.data_loader.height
