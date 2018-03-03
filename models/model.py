@@ -22,27 +22,26 @@ class Model(ABC):
         """Train the model."""
         pass
 
-    def get_out_dir(self):
+    def get_output_dir(self):
         """Get the name of the model's output directory."""
-        model_dir = '{}/{}'.format(self.get_base_out_dir(), self.get_name())
+        model_dir = '{}/{}'.format(self.get_base_output_dir(), self.get_name())
         if not os.path.isdir(model_dir):
             os.makedirs(model_dir)
 
-        dataset_name = self.data_loader.get_name()
-        dataset_dir = '{}/{}'.format(model_dir, dataset_name)
+        dataset_dir = '{}/{}'.format(model_dir, self.data_loader.name)
         if not os.path.isdir(dataset_dir):
             os.makedirs(dataset_dir)
 
         return dataset_dir
 
     @staticmethod
-    def get_base_out_dir():
+    def get_base_output_dir():
         """Get the base output directory."""
         return BASE_OUT_DIR
 
     def get_log_dir(self):
         """Get the name of the model's logging directory."""
-        model_dir = '{}/{}'.format(self.get_base_out_dir(), self.get_name())
+        model_dir = '{}/{}'.format(self.get_base_output_dir(), self.get_name())
         if not os.path.isdir(model_dir):
             os.makedirs(model_dir)
 

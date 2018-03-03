@@ -5,8 +5,8 @@ import tensorflow as tf
 import os
 
 DATA_DIR = 'data/pokemon'
-HEIGHT = 256
-WIDTH = 256
+HEIGHT = 128
+WIDTH = 128
 CHANNELS = 3
 
 

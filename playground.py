@@ -2,6 +2,7 @@ import argparse
 import colorama
 from dataloaders.dataloader import DataLoader
 from dataloaders.cifar10 import Cifar10DataLoader
+from dataloaders.imagenet import ImagenetDataLoader
 from dataloaders.mnist import MNISTDataLoader
 from dataloaders.pokemon import PokemonDataLoader
 from models.model import Model
@@ -11,6 +12,7 @@ from models.wgan import WGAN
 
 DATASETS = {
     'cifar10': Cifar10DataLoader,
+    'imagenet': ImagenetDataLoader,
     # 'lsun-classroom': '',
     'mnist': MNISTDataLoader,
     'pokemon': PokemonDataLoader,
@@ -21,24 +23,25 @@ MODELS = {
     'wgan': WGAN,
 }
 SAVE_FILE_NAME = 'checkpoint/checkpoint.ckpt'
+BATCH_SIZE = 32
 
 
 def main(args):
     data_loader = dataset_factory(args.dataset)
-    print(data_loader.__class__.__name__)
-    algorithm = algorithm_factory(args.model, data_loader, args.save)
-    print(algorithm.__class__.__name__)
-    algorithm.train(args.epochs)
+    model = model_factory(args.model, data_loader, args.save)
+    model.train(args.epochs)
 
 
 def dataset_factory(dataset_name: str):
     if dataset_name in DATASETS:
-        return DATASETS[dataset_name]()
+        data_loader = DATASETS[dataset_name](BATCH_SIZE)
+        data_loader.load_data()
+        return data_loader
     else:
         raise ValueError('Dataset does not exist "%s"' % dataset_name)
 
 
-def algorithm_factory(model_type: str, data_loader: DataLoader, save) -> Model:
+def model_factory(model_type: str, data_loader: DataLoader, save: bool) -> Model:
     if model_type in MODELS:
         model = MODELS[model_type]
         return model(data_loader, save)

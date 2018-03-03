@@ -46,7 +46,6 @@ class DCGANKeras(Model):
         # self.validation_names = ['val_loss', 'val_mae']
 
     def train(self, epochs: int, d_iters=5, g_iters=1):
-        self.data_loader.load_data()
         batch_size = self.data_loader.batch_size
         start_time = time.time()
         for epoch in range(epochs):
@@ -95,7 +94,7 @@ class DCGANKeras(Model):
 
                 # save a generated image
                 img = image.array_to_img(generated_images[0] * 255, scale=False)
-                img.save(os.path.join(self.get_out_dir(), 'epoch_{:06d}.png'.format(epoch)))
+                img.save(os.path.join(self.get_output_dir(), 'epoch_{:06d}.png'.format(epoch)))
 
     def get_discriminator(self) -> Model:
         height = self.data_loader.height

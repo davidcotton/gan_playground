@@ -8,7 +8,7 @@ CHANNELS = 3
 
 
 class Cifar10DataLoader(DataLoader):
-    def __init__(self, batch_size: int = 20) -> None:
+    def __init__(self, batch_size: int) -> None:
         super().__init__('cifar10', HEIGHT, WIDTH, CHANNELS, batch_size)
         self.x_train: np.ndarray = None
         self.y_train: np.ndarray = None
@@ -17,9 +17,8 @@ class Cifar10DataLoader(DataLoader):
         """Load the dataset."""
         (self.x_train, self.y_train), (x_test, y_test) = cifar10.load_data()
         self.x_train = self.x_train[self.y_train.flatten() == 6]  # frog images
-        self.x_train = self.x_train.reshape((self.x_train.shape[0],) + (HEIGHT, WIDTH, CHANNELS))\
-                           .astype('float32') / 255.0
-        derp = 1
+        new_shape = (self.x_train.shape[0],) + (HEIGHT, WIDTH, CHANNELS)
+        self.x_train = self.x_train.reshape(new_shape).astype('float32') / 255.0
 
     def next_batch(self):
         """Fetch the next batch of images from the dataset."""

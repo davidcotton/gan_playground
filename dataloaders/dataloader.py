@@ -1,6 +1,7 @@
 """Helper to assist in the loading and batching of different image datasets."""
 
 from abc import ABC, abstractmethod
+import numpy as np
 
 
 class DataLoader(ABC):
@@ -11,6 +12,8 @@ class DataLoader(ABC):
         self.channels: int = channels
         self.batch_size: int = batch_size
         self.batch_num: int = 0
+        self.x_train: np.ndarray = None
+        self.y_train: np.ndarray = None
 
     @abstractmethod
     def load_data(self) -> None:
