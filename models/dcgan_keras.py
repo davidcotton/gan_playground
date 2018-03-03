@@ -54,11 +54,11 @@ class DCGANKeras(Model):
 
             # decode them to fake images
             generated_images = self.generator.predict(random_latent_vectors)
-            print('gen_img_shape', generated_images.shape)
+            # print('gen_img_shape', generated_images.shape)
 
             # combine them with real images
             real_images = self.data_loader.next_batch()
-            print('real_img_shape', real_images.shape)
+            # print('real_img_shape', real_images.shape)
             combined_images = np.concatenate([generated_images, real_images])
 
             # assemble labels discriminating real from fake images
